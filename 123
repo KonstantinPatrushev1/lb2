@@ -1,0 +1,118 @@
+#include "pch.h"
+#include <gtest/gtest.h>
+#include <cmath>
+#include <vector>
+
+
+
+
+double probabilityIntersection(double pA, double pB) {
+	return pA * pB;
+}
+
+
+double probabilityUnion(double pA, double pB, double pIntersection) {
+	return pA + pB - pIntersection;
+}
+
+
+double conditionalProbability(double pIntersection, double pB) {
+	return pIntersection / pB;
+}
+
+double bayesTheorem(double pBgivenA, double pA, double pB) {
+	return (pBgivenA * pA) / pB;
+}
+
+
+double expectedValue(const std::vector<double>& values, const std::vector<double>& probabilities) {
+	double expectedValue = 0;
+	for (size_t i = 0; i < values.size(); ++i) {
+		expectedValue += values[i] * probabilities[i];
+	}
+	return expectedValue;
+}
+
+
+double variance(const std::vector<double>& values, const std::vector<double>& probabilities) {
+	double mean = expectedValue(values, probabilities);
+	double variance = 0;
+	for (size_t i = 0; i < values.size(); ++i) {
+		variance += (values[i] - mean) * (values[i] - mean) * probabilities[i];
+	}
+	return variance;
+}
+
+
+double standardDeviation(const std::vector<double>& values, const std::vector<double>& probabilities) {
+	return sqrt(variance(values, probabilities));
+}
+
+
+double factorial(int n) {
+	return (n <= 1) ? 1 : n * factorial(n - 1);
+}
+
+
+double combinations(int n, int k) {
+	return factorial(n) / (factorial(k) * factorial(n - k));
+}
+
+
+double binomialDistribution(int n, int k, double p) {
+	return combinations(n, k) * pow(p, k) * pow(1 - p, n - k);
+}
+
+
+
+TEST(ProbabilityTests, ProbabilityIntersection) {
+	EXPECT_DOUBLE_EQ(probabilityIntersection(0.5, 0.4), 0.2);
+}
+
+TEST(ProbabilityTests, ProbabilityUnion) {
+	EXPECT_DOUBLE_EQ(probabilityUnion(0.5, 0.4, 0.2), 0.7);
+}
+
+TEST(ProbabilityTests, ConditionalProbability) {
+	EXPECT_DOUBLE_EQ(conditionalProbability(0.2, 0.4), 0.5);
+}
+
+TEST(ProbabilityTests, BayesTheorem) {
+	EXPECT_DOUBLE_EQ(bayesTheorem(0.8, 0.3, 0.5), 0.48);
+}
+
+TEST(ProbabilityTests, ExpectedValue) {
+	std::vector<double> values = { 1, 2, 3 };
+	std::vector<double> probabilities = { 0.2, 0.3, 0.5 };
+	EXPECT_DOUBLE_EQ(expectedValue(values, probabilities), 2.3);
+}
+
+TEST(ProbabilityTests, Variance) {
+	std::vector<double> values = { 1, 2, 3 };
+	std::vector<double> probabilities = { 0.2, 0.3, 0.5 };
+	EXPECT_DOUBLE_EQ(variance(values, probabilities), 0.61);
+}
+
+TEST(ProbabilityTests, StandardDeviation) {
+	std::vector<double> values = { 1, 2, 3 };
+	std::vector<double> probabilities = { 0.2, 0.3, 0.5 };
+	EXPECT_DOUBLE_EQ(standardDeviation(values, probabilities), sqrt(0.61));
+}
+
+TEST(ProbabilityTests, Factorial) {
+	EXPECT_DOUBLE_EQ(factorial(5), 120);
+}
+
+TEST(ProbabilityTests, Combinations) {
+	EXPECT_DOUBLE_EQ(combinations(5, 2), 10);
+}
+
+TEST(ProbabilityTests, BinomialDistribution) {
+	EXPECT_DOUBLE_EQ(binomialDistribution(5, 2, 0.5), 0.3125);
+}
+
+
+int main(int argc, char **argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
+}
